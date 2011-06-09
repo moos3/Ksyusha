@@ -8,22 +8,26 @@ module Ksyusha
     field :email, type String
     embed_many :files
     embed_many :buckets
-    
+
+    def self.find_by_email(email)
+      @user = User.where(email: email)
+    end
+
     def password
       @password ||= Password.new(password_hash)
     end
-    
+
     def password=(new_password)
       @password = Password.create(new_password)
       self.password_hash = @password
     end
-    
+
     def create
       @user = User.new(params[:user])
       @user.password = params[:password]
       @user.save!
     end
-    
+
     def login
       @user = User.find_by_email(param[:emails])
       if @user.password == params[:password]
@@ -32,7 +36,7 @@ module Ksyusha
         return false
       end
     end
-    
+
     def forgot_password
       @user = User.find_by_email(params[:email])
       random_password = Array.new(10).map { (65 + rand(58)).char }.join
@@ -40,6 +44,6 @@ module Ksyusha
       @user.save!
       Mailer.create_add_deliver_password_change(@user, random_password)
     end
-    
+
   end
 end
