@@ -1,0 +1,5 @@
+desc "Run application server via shotgun"
+task :server do
+	dh %{shotgun config.ru}
+end
+task :s => :server
